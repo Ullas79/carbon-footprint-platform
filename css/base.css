@@ -1,0 +1,589 @@
+/* ==========================================================================
+   EcoTrack — Base Styles (base.css)
+   ==========================================================================
+
+   Foundation layer that resets browser defaults, imports fonts, and sets
+   global typographic and element styles.
+
+   Sections:
+     1. Font Imports — Google Fonts (Outfit, Inter, JetBrains Mono)
+     2. Modern CSS Reset — Normalize cross-browser defaults
+     3. Root Element — html & body setup
+     4. Typography — Headings, paragraphs, inline elements
+     5. Links — Default anchor styling
+     6. Lists — Reset and styled lists
+     7. Media — Images, video, SVG defaults
+     8. Tables — Base table styling
+     9. Code — Pre, code, kbd
+    10. Selection — Text highlight styles
+    11. Scrollbar — Custom thin scrollbar
+    12. Utility Classes — Common helpers
+
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. FONT IMPORTS
+   --------------------------------------------------------------------------
+   Outfit  → Bold, geometric display font for headings
+   Inter   → Highly legible sans-serif for body text
+   JetBrains Mono → Monospace for data, metrics, code
+   -------------------------------------------------------------------------- */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+
+/* --------------------------------------------------------------------------
+   2. MODERN CSS RESET
+   --------------------------------------------------------------------------
+   Removes inconsistent browser defaults while preserving useful ones.
+   Based on modern best practices (Josh Comeau / Andy Bell resets).
+   -------------------------------------------------------------------------- */
+
+/* Box model: border-box everywhere */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Strip margins, padding, and inherit fonts */
+* {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+}
+
+/* Prevent font-size inflation on mobile */
+html {
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+/* Smoother line-wrapping for long text */
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+/* Remove list styles on ul/ol with a list role (nav lists, etc.) */
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+}
+
+/* Anchors without a class get default styles */
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+  color: currentColor;
+}
+
+/* Make images and media behave like block elements */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Remove built-in form element styling */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+/* Remove textarea resize handle on non-resize textareas */
+textarea:not([rows]) {
+  min-height: 10em;
+}
+
+/* Smooth anchor scrolling */
+:target {
+  scroll-margin-block: 5ex;
+}
+
+/* Remove animations for users who prefer reduced motion — reinforced in accessibility.css */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   3. ROOT ELEMENT — html & body
+   -------------------------------------------------------------------------- */
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark light;
+  hanging-punctuation: first last;
+
+  /* Set the base size to enable rem scaling */
+  font-size: 16px;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;       /* Use dynamic viewport height where supported */
+
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+  letter-spacing: var(--tracking-normal);
+  color: var(--eco-text);
+
+  background-color: var(--eco-bg);
+  background-image: var(--eco-gradient-glow);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+
+  /* Prevent overscroll bounce on macOS/iOS */
+  overscroll-behavior: none;
+}
+
+
+/* --------------------------------------------------------------------------
+   4. TYPOGRAPHY
+   -------------------------------------------------------------------------- */
+
+/* ── Headings ────────────────────────────────────────────────────────────── */
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: var(--font-heading);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--eco-text);
+}
+
+h1, .h1 {
+  font-size: var(--text-5xl);
+  letter-spacing: var(--tracking-tighter);
+}
+
+h2, .h2 {
+  font-size: var(--text-4xl);
+}
+
+h3, .h3 {
+  font-size: var(--text-3xl);
+}
+
+h4, .h4 {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+}
+
+h5, .h5 {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+}
+
+h6, .h6 {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
+  color: var(--eco-text-secondary);
+}
+
+/* ── Paragraphs ──────────────────────────────────────────────────────────── */
+
+p {
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--eco-text-secondary);
+}
+
+p + p {
+  margin-top: var(--space-4);
+}
+
+/* Lead / intro paragraph */
+.lead {
+  font-size: var(--text-lg);
+  line-height: var(--leading-relaxed);
+  color: var(--eco-text-secondary);
+}
+
+/* Small text */
+small, .text-sm {
+  font-size: var(--text-sm);
+}
+
+.text-xs {
+  font-size: var(--text-xs);
+}
+
+/* Strong & emphasis */
+strong, b {
+  font-weight: var(--weight-semibold);
+  color: var(--eco-text);
+}
+
+em, i {
+  font-style: italic;
+}
+
+/* Mark / highlight */
+mark {
+  background-color: var(--eco-primary-ghost);
+  color: var(--eco-primary-light);
+  padding: var(--space-0-5) var(--space-1);
+  border-radius: var(--radius-xs);
+}
+
+/* Blockquote */
+blockquote {
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--eco-primary);
+  color: var(--eco-text-secondary);
+  font-style: italic;
+  margin: var(--space-4) 0;
+}
+
+/* Horizontal rule */
+hr {
+  border: none;
+  height: 1px;
+  background: var(--eco-border-light);
+  margin: var(--space-8) 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   5. LINKS
+   -------------------------------------------------------------------------- */
+
+a {
+  color: var(--eco-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--eco-primary-light);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+a:active {
+  color: var(--eco-primary-dark);
+}
+
+
+/* --------------------------------------------------------------------------
+   6. LISTS
+   -------------------------------------------------------------------------- */
+
+ul, ol {
+  padding-left: var(--space-6);
+}
+
+li {
+  line-height: var(--leading-relaxed);
+  color: var(--eco-text-secondary);
+}
+
+li + li {
+  margin-top: var(--space-1);
+}
+
+/* No-style list utility */
+.list-none {
+  list-style: none;
+  padding-left: 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   7. MEDIA — Images, Video, SVG
+   -------------------------------------------------------------------------- */
+
+img {
+  height: auto;
+  vertical-align: middle;
+}
+
+svg {
+  fill: currentColor;
+}
+
+figure {
+  margin: var(--space-6) 0;
+}
+
+figcaption {
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--eco-text-muted);
+  text-align: center;
+}
+
+
+/* --------------------------------------------------------------------------
+   8. TABLES (base only — component tables in components.css)
+   -------------------------------------------------------------------------- */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+th {
+  font-weight: var(--weight-semibold);
+  text-align: left;
+  color: var(--eco-text-secondary);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--eco-border);
+}
+
+td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--eco-border-light);
+  color: var(--eco-text-secondary);
+}
+
+tr:hover td {
+  background-color: var(--eco-surface-light);
+}
+
+
+/* --------------------------------------------------------------------------
+   9. CODE — Pre, Code, Kbd
+   -------------------------------------------------------------------------- */
+
+code,
+kbd,
+samp {
+  font-family: var(--font-mono);
+  font-size: 0.875em;          /* Slightly smaller than surrounding text */
+}
+
+/* Inline code */
+:not(pre) > code {
+  padding: var(--space-0-5) var(--space-1-5);
+  background-color: var(--eco-surface);
+  border: 1px solid var(--eco-border-light);
+  border-radius: var(--radius-sm);
+  color: var(--eco-primary-light);
+}
+
+/* Code blocks */
+pre {
+  padding: var(--space-4);
+  background-color: var(--eco-surface);
+  border: 1px solid var(--eco-border-light);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  tab-size: 2;
+  line-height: var(--leading-relaxed);
+}
+
+pre code {
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+}
+
+/* Keyboard shortcut */
+kbd {
+  display: inline-block;
+  padding: var(--space-0-5) var(--space-1-5);
+  background: var(--eco-surface-light);
+  border: 1px solid var(--eco-border);
+  border-radius: var(--radius-xs);
+  box-shadow: inset 0 -1px 0 var(--eco-border);
+  font-size: var(--text-xs);
+  color: var(--eco-text);
+}
+
+
+/* --------------------------------------------------------------------------
+   10. SELECTION STYLES
+   --------------------------------------------------------------------------
+   Brand-green highlight when selecting text.
+   -------------------------------------------------------------------------- */
+
+::selection {
+  background-color: rgba(16, 185, 129, 0.30);
+  color: #FFFFFF;
+}
+
+::-moz-selection {
+  background-color: rgba(16, 185, 129, 0.30);
+  color: #FFFFFF;
+}
+
+
+/* --------------------------------------------------------------------------
+   11. CUSTOM SCROLLBAR
+   --------------------------------------------------------------------------
+   Thin, dark scrollbar with green hover for WebKit browsers.
+   -------------------------------------------------------------------------- */
+
+/* WebKit (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-width);
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--scrollbar-track);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+
+/* --------------------------------------------------------------------------
+   12. UTILITY CLASSES
+   -------------------------------------------------------------------------- */
+
+/* ── Text Alignment ──────────────────────────────────────────────────────── */
+.text-center  { text-align: center; }
+.text-left    { text-align: left; }
+.text-right   { text-align: right; }
+
+/* ── Text Colors ─────────────────────────────────────────────────────────── */
+.text-primary   { color: var(--eco-primary) !important; }
+.text-accent    { color: var(--eco-accent) !important; }
+.text-success   { color: var(--eco-success) !important; }
+.text-warning   { color: var(--eco-warning) !important; }
+.text-danger    { color: var(--eco-danger) !important; }
+.text-muted     { color: var(--eco-text-muted) !important; }
+.text-secondary { color: var(--eco-text-secondary) !important; }
+
+/* ── Font Utilities ──────────────────────────────────────────────────────── */
+.font-mono     { font-family: var(--font-mono) !important; }
+.font-heading  { font-family: var(--font-heading) !important; }
+.font-light    { font-weight: var(--weight-light) !important; }
+.font-medium   { font-weight: var(--weight-medium) !important; }
+.font-semibold { font-weight: var(--weight-semibold) !important; }
+.font-bold     { font-weight: var(--weight-bold) !important; }
+
+/* ── Screen Reader Only ──────────────────────────────────────────────────── 
+   Visually hidden but accessible to assistive technologies.                */
+.sr-only,
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Allow sr-only to become visible when focused (e.g., skip-nav links) */
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  padding: inherit !important;
+  margin: inherit !important;
+  overflow: visible !important;
+  clip: auto !important;
+  white-space: normal !important;
+}
+
+/* ── Display Utilities ───────────────────────────────────────────────────── */
+.d-none    { display: none !important; }
+.d-block   { display: block !important; }
+.d-flex    { display: flex !important; }
+.d-grid    { display: grid !important; }
+.d-inline  { display: inline !important; }
+
+/* ── Flex Helpers ────────────────────────────────────────────────────────── */
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.gap-1  { gap: var(--space-1); }
+.gap-2  { gap: var(--space-2); }
+.gap-3  { gap: var(--space-3); }
+.gap-4  { gap: var(--space-4); }
+.gap-6  { gap: var(--space-6); }
+.gap-8  { gap: var(--space-8); }
+
+/* ── Truncation ──────────────────────────────────────────────────────────── */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Misc Utilities ──────────────────────────────────────────────────────── */
+.rounded-full { border-radius: var(--radius-full) !important; }
+.no-select    { user-select: none; }
+.pointer      { cursor: pointer; }
+.relative     { position: relative; }
+.overflow-hidden { overflow: hidden; }
+.w-full       { width: 100%; }
+.h-full       { height: 100%; }

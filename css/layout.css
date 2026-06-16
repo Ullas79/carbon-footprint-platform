@@ -1,0 +1,649 @@
+/* ==========================================================================
+   EcoTrack — Layout System (layout.css)
+   ==========================================================================
+
+   Structural layout for the application shell: sidebar navigation,
+   main content area, page headers, and responsive grid utilities.
+
+   Responsive Strategy:
+     ≤ 767px  → Mobile:  Bottom tab bar, full-width content
+     768–1023 → Tablet:  Collapsed icon-only sidebar
+     ≥ 1024   → Desktop: Full sidebar with labels
+
+   Sections:
+     1. App Layout — Root grid
+     2. Sidebar — Fixed navigation panel
+     3. Nav Items — Individual navigation links
+     4. Main Content — Scrollable content area
+     5. Page Header — Title + actions row
+     6. Grid Utilities — Responsive column grids
+     7. Section — Content section spacing
+     8. Responsive Breakpoints — Media queries
+
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. APP LAYOUT
+   ==========================================================================
+   CSS Grid shell: sidebar on the left, content on the right.
+   ========================================================================== */
+
+.app-layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  grid-template-rows: 1fr;
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+}
+
+
+/* ==========================================================================
+   2. SIDEBAR
+   ==========================================================================
+   Fixed left navigation panel with logo, nav items, and user profile.
+   Glassmorphism background with subtle border.
+   ========================================================================== */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: var(--sidebar-width);
+  z-index: var(--z-sidebar);
+
+  display: flex;
+  flex-direction: column;
+
+  background: var(--glass-bg-heavy);
+  backdrop-filter: blur(var(--glass-blur-heavy));
+  -webkit-backdrop-filter: blur(var(--glass-blur-heavy));
+  border-right: 1px solid var(--eco-border-light);
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  transition: width var(--transition-base) var(--ease-in-out);
+}
+
+/* ── Sidebar Logo ────────────────────────────────────────────────────────── */
+.sidebar__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  flex-shrink: 0;
+}
+
+.sidebar__logo-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: var(--eco-gradient-primary);
+  color: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.sidebar__logo-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.sidebar__logo-text {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar__logo-name {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--eco-text);
+  line-height: var(--leading-tight);
+  white-space: nowrap;
+}
+
+.sidebar__logo-tagline {
+  font-size: var(--text-xs);
+  color: var(--eco-text-muted);
+  white-space: nowrap;
+}
+
+/* ── Sidebar Navigation ─────────────────────────────────────────────────── */
+.sidebar__nav {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* Section labels inside nav */
+.sidebar__section-label {
+  padding: var(--space-4) var(--space-3) var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--eco-text-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-widest);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* ── Sidebar Footer / User Info ──────────────────────────────────────────── */
+.sidebar__footer {
+  padding: var(--space-4) var(--space-3);
+  border-top: 1px solid var(--eco-border-light);
+  flex-shrink: 0;
+}
+
+.sidebar__user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2-5) var(--space-3);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.sidebar__user:hover {
+  background: var(--eco-surface-light);
+}
+
+.sidebar__user-info {
+  flex: 1;
+  overflow: hidden;
+}
+
+.sidebar__user-name {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--eco-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar__user-level {
+  font-size: var(--text-xs);
+  color: var(--eco-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+
+/* ==========================================================================
+   3. NAV ITEMS
+   ==========================================================================
+   Individual sidebar navigation links with active state indicator.
+   ========================================================================== */
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2-5) var(--space-3);
+  min-height: 44px;
+
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--eco-text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.nav-item:hover {
+  background: var(--eco-surface-light);
+  color: var(--eco-text);
+  text-decoration: none;
+}
+
+/* ── Active State ────────────────────────────────────────────────────────── */
+/* Green left border + subtle background highlight */
+.nav-item.is-active {
+  background: var(--eco-primary-ghost);
+  color: var(--eco-primary);
+  box-shadow: inset 3px 0 0 var(--eco-primary);
+}
+
+.nav-item.is-active .nav-item__icon {
+  color: var(--eco-primary);
+}
+
+/* ── Icon ────────────────────────────────────────────────────────────────── */
+.nav-item__icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--eco-text-muted);
+  transition: color var(--transition-fast);
+}
+
+.nav-item:hover .nav-item__icon {
+  color: var(--eco-text);
+}
+
+/* ── Label ───────────────────────────────────────────────────────────────── */
+.nav-item__label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-item__mobile-label {
+  display: none;
+}
+
+/* ── Badge on nav item (e.g., notification count) ────────────────────────── */
+.nav-item__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 var(--space-1-5);
+  font-size: 10px;
+  font-weight: var(--weight-bold);
+  color: #FFFFFF;
+  background: var(--eco-danger);
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+
+/* ==========================================================================
+   4. MAIN CONTENT
+   ==========================================================================
+   Scrollable content area with a max-width container.
+   ========================================================================== */
+
+.main-content {
+  grid-column: 2;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-y: auto;
+  padding: var(--space-8);
+  background: var(--eco-bg);
+}
+
+/* Centered container within main content */
+.container {
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+
+/* Full-width variant */
+.container--full {
+  max-width: none;
+}
+
+
+/* ==========================================================================
+   5. PAGE HEADER
+   ==========================================================================
+   Top row of a page with title, subtitle, and action buttons.
+   ========================================================================== */
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+  flex-wrap: wrap;
+}
+
+.page-header__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.page-header__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  color: var(--eco-text);
+  line-height: var(--leading-tight);
+}
+
+.page-header__subtitle {
+  font-size: var(--text-base);
+  color: var(--eco-text-muted);
+}
+
+.page-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+
+/* ==========================================================================
+   6. GRID UTILITIES
+   ==========================================================================
+   Responsive column grid layouts.
+   ========================================================================== */
+
+.grid {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-6);
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-6);
+}
+
+/* Auto-fit grid (fills available space) */
+.grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-6);
+}
+
+/* Auto-fill variant */
+.grid-auto-fill {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-6);
+}
+
+
+/* ==========================================================================
+   7. SECTION
+   ==========================================================================
+   Content section with consistent vertical spacing.
+   ========================================================================== */
+
+.section {
+  margin-bottom: var(--space-8);
+}
+
+.section + .section {
+  padding-top: var(--space-2);
+}
+
+.section__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  color: var(--eco-text);
+  margin-bottom: var(--space-4);
+}
+
+.section__subtitle {
+  font-size: var(--text-sm);
+  color: var(--eco-text-muted);
+  margin-top: calc(var(--space-1) * -1);
+  margin-bottom: var(--space-4);
+}
+
+/* Section with header row (title + action) */
+.section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.section__header .section__title {
+  margin-bottom: 0;
+}
+
+
+/* ==========================================================================
+   8. RESPONSIVE BREAKPOINTS
+   ==========================================================================
+   Mobile-first responsive overrides for the layout system.
+   ========================================================================== */
+
+/* ── Tablet (768px – 1023px): Collapsed icon-only sidebar ────────────────── */
+@media (max-width: 1023px) {
+  .app-layout {
+    grid-template-columns: var(--sidebar-collapsed) 1fr;
+  }
+
+  .sidebar {
+    width: var(--sidebar-collapsed);
+  }
+
+  /* Hide text labels in collapsed sidebar */
+  .sidebar__logo-text,
+  .sidebar__section-label,
+  .nav-item__label,
+  .nav-item__badge,
+  .sidebar__user-info {
+    display: none;
+  }
+
+  .sidebar__logo {
+    justify-content: center;
+    padding: var(--space-5) var(--space-2);
+  }
+
+  .sidebar__nav {
+    padding: var(--space-2);
+    align-items: center;
+  }
+
+  .nav-item {
+    justify-content: center;
+    padding: var(--space-2-5);
+    width: 48px;
+    border-radius: var(--radius-md);
+  }
+
+  /* Adjust active indicator for icon-only mode */
+  .nav-item.is-active {
+    box-shadow: none;
+    background: var(--eco-primary-ghost);
+    border: 1px solid rgba(16, 185, 129, 0.20);
+  }
+
+  .sidebar__footer {
+    padding: var(--space-3) var(--space-2);
+  }
+
+  .sidebar__user {
+    justify-content: center;
+    padding: var(--space-2);
+  }
+
+  /* Adjust main content padding */
+  .main-content {
+    padding: var(--space-6);
+  }
+
+  /* Grid adjustments */
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
+/* ── Mobile (≤ 767px): Bottom tab bar ────────────────────────────────────── */
+@media (max-width: 767px) {
+  .app-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+    padding-bottom: var(--bottom-nav-height);
+  }
+
+  /* Sidebar transforms into bottom navigation bar */
+  .sidebar {
+    position: fixed;
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: var(--bottom-nav-height);
+    flex-direction: row;
+    border-right: none;
+    border-top: 1px solid var(--eco-border-light);
+    z-index: var(--z-sidebar);
+    overflow: visible;
+    padding: 0;
+  }
+
+  /* Hide elements not needed in bottom nav */
+  .sidebar__logo,
+  .sidebar__section-label,
+  .sidebar__footer,
+  .nav-item__label,
+  .nav-item__badge {
+    display: none;
+  }
+
+  /* Nav becomes horizontal */
+  .sidebar__nav {
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: var(--space-1) 0;
+    width: 100%;
+    gap: 0;
+  }
+
+  .nav-item {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-1);
+    gap: var(--space-0-5);
+    flex: 1;
+    border-radius: 0;
+    min-height: auto;
+    height: 100%;
+  }
+
+  .nav-item.is-active {
+    box-shadow: none;
+    background: transparent;
+  }
+
+  /* Show abbreviated labels on mobile bottom nav */
+  .nav-item__mobile-label {
+    display: block;
+    font-size: 10px;
+    font-weight: var(--weight-medium);
+    color: var(--eco-text-muted);
+  }
+
+  .nav-item.is-active .nav-item__mobile-label {
+    color: var(--eco-primary);
+  }
+
+  /* Active indicator: dot above icon on mobile */
+  .nav-item.is-active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 3px;
+    background: var(--eco-primary);
+    border-radius: 0 0 var(--radius-full) var(--radius-full);
+  }
+
+  .nav-item__icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* Main content adjustments */
+  .main-content {
+    grid-column: 1;
+    padding: var(--space-4);
+  }
+
+  /* Grid collapses to single column on mobile */
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-auto {
+    grid-template-columns: 1fr;
+  }
+
+  /* Page header stacks vertically */
+  .page-header {
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+  }
+
+  .page-header__title {
+    font-size: var(--text-2xl);
+  }
+
+  .page-header__actions {
+    width: 100%;
+  }
+
+  .page-header__actions .btn {
+    flex: 1;
+  }
+}
+
+
+/* ── Wide Desktop (≥ 1440px) ─────────────────────────────────────────────── */
+@media (min-width: 1440px) {
+  .main-content {
+    padding: var(--space-10);
+  }
+}
+
+
+/* ── Extra small mobile (≤ 374px) ────────────────────────────────────────── */
+@media (max-width: 374px) {
+  .main-content {
+    padding: var(--space-3);
+  }
+
+  .page-header__title {
+    font-size: var(--text-xl);
+  }
+}

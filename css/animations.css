@@ -1,0 +1,254 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   EcoTrack — Animations
+   Keyframe definitions and utility classes for page transitions,
+   micro-interactions, loading states, and celebrations.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Fade Animations ───────────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* ─── Slide Animations ──────────────────────────────────────────────────── */
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); }
+  to   { transform: translateY(0); }
+}
+
+/* ─── Scale Animations ──────────────────────────────────────────────────── */
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes scaleOut {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.9); }
+}
+
+/* ─── Continuous Animations ─────────────────────────────────────────────── */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.05); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(16, 185, 129, 0.2); }
+  50%      { box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+}
+
+@keyframes shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  40%      { transform: translateY(-8px); }
+  60%      { transform: translateY(-4px); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
+/* ─── Progress / Fill Animations ────────────────────────────────────────── */
+@keyframes progressFill {
+  from { width: 0; }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Effect Animations ─────────────────────────────────────────────────── */
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+@keyframes confetti {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(-200px) rotate(720deg); opacity: 0; }
+}
+
+@keyframes typewriter {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+
+@keyframes leafFall {
+  0%   { transform: translateY(-20px) rotate(0deg); opacity: 0; }
+  10%  { opacity: 1; }
+  100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25%      { transform: rotate(-5deg); }
+  75%      { transform: rotate(5deg); }
+}
+
+@keyframes slideInUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+/* ─── Toast Animations ──────────────────────────────────────────────────── */
+.ecotrack-toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--eco-surface, #1E293B);
+  border: 1px solid var(--eco-border, #475569);
+  border-radius: 12px;
+  color: var(--eco-text, #F8FAFC);
+  font-size: 0.88rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  transform: translateX(120%);
+  opacity: 0;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+  max-width: 380px;
+}
+
+.ecotrack-toast--visible {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.ecotrack-toast--exit {
+  transform: translateX(120%);
+  opacity: 0;
+}
+
+.ecotrack-toast--success { border-left: 3px solid #22C55E; }
+.ecotrack-toast--error   { border-left: 3px solid #EF4444; }
+.ecotrack-toast--warning { border-left: 3px solid #F59E0B; }
+.ecotrack-toast--info    { border-left: 3px solid #3B82F6; }
+
+.ecotrack-toast__icon { font-size: 1.1rem; flex-shrink: 0; }
+.ecotrack-toast__message { flex: 1; }
+
+.ecotrack-toast__close {
+  background: none;
+  border: none;
+  color: var(--eco-text-muted, #64748B);
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 4px;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.ecotrack-toast__close:hover { color: var(--eco-text, #F8FAFC); }
+
+/* ─── Animation Utility Classes ─────────────────────────────────────────── */
+.animate-fade-in     { animation: fadeIn 0.5s ease-out both; }
+.animate-fade-in-up  { animation: fadeInUp 0.5s ease-out both; }
+.animate-fade-in-down{ animation: fadeInDown 0.5s ease-out both; }
+.animate-slide-left  { animation: slideInLeft 0.5s ease-out both; }
+.animate-slide-right { animation: slideInRight 0.5s ease-out both; }
+.animate-scale-in    { animation: scaleIn 0.4s ease-out both; }
+.animate-pulse       { animation: pulse 2s ease-in-out infinite; }
+.animate-glow        { animation: glow 2s ease-in-out infinite; }
+.animate-spin        { animation: spin 1s linear infinite; }
+.animate-bounce      { animation: bounce 0.6s ease-out; }
+.animate-float       { animation: float 3s ease-in-out infinite; }
+.animate-wiggle      { animation: wiggle 0.5s ease-in-out; }
+
+/* ─── Stagger Classes (sequential animation delays) ─────────────────────── */
+.stagger-1  { animation-delay: 0.05s; }
+.stagger-2  { animation-delay: 0.10s; }
+.stagger-3  { animation-delay: 0.15s; }
+.stagger-4  { animation-delay: 0.20s; }
+.stagger-5  { animation-delay: 0.25s; }
+.stagger-6  { animation-delay: 0.30s; }
+.stagger-7  { animation-delay: 0.35s; }
+.stagger-8  { animation-delay: 0.40s; }
+.stagger-9  { animation-delay: 0.45s; }
+.stagger-10 { animation-delay: 0.50s; }
+
+/* ─── Page Transition Classes ───────────────────────────────────────────── */
+.page-enter {
+  animation: fadeInUp 0.3s ease-out both;
+}
+
+.page-exit {
+  animation: fadeOut 0.15s ease-in both;
+}
+
+/* ─── Skeleton Loading ──────────────────────────────────────────────────── */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--eco-surface-light, #334155) !important;
+  color: transparent !important;
+  border-radius: var(--radius-md, 12px);
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-text {
+  height: 14px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+
+.skeleton-text.short { width: 60%; }
+.skeleton-text.medium { width: 80%; }
+
+.skeleton-circle {
+  border-radius: 50%;
+}

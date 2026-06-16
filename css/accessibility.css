@@ -1,0 +1,256 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   EcoTrack — Accessibility Overrides
+   Focus styles, skip navigation, high contrast mode, large text mode,
+   reduced motion, screen reader helpers, and touch target compliance.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Skip Navigation ───────────────────────────────────────────────────── */
+.skip-nav {
+  position: absolute;
+  top: -100%;
+  left: var(--space-4);
+  z-index: 10001;
+  padding: var(--space-3) var(--space-5);
+  background: var(--eco-primary);
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+
+.skip-nav:focus {
+  top: 0;
+  outline: 2px solid var(--eco-text);
+  outline-offset: 2px;
+}
+
+/* ─── Focus Styles ──────────────────────────────────────────────────────── */
+/* Show focus ring ONLY for keyboard users (detected via JS .keyboard-user) */
+:focus { outline: none; }
+
+.keyboard-user *:focus {
+  outline: 2px solid var(--eco-primary);
+  outline-offset: 2px;
+}
+
+/* Specific focus overrides for interactive elements */
+.keyboard-user .btn:focus,
+.keyboard-user .nav-item:focus,
+.keyboard-user .mobile-nav-item:focus,
+.keyboard-user .input:focus,
+.keyboard-user .select:focus,
+.keyboard-user .textarea:focus,
+.keyboard-user .switch input:focus + .switch-slider,
+.keyboard-user .option-card:focus,
+.keyboard-user .quick-action-btn:focus,
+.keyboard-user .challenge-tab:focus,
+.keyboard-user .tracker-tab:focus,
+.keyboard-user .quick-reply-btn:focus {
+  outline: 2px solid var(--eco-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+}
+
+/* Focus within for compound components */
+.keyboard-user .card:focus-within {
+  outline: 1px solid var(--eco-primary);
+  outline-offset: 2px;
+}
+
+/* ─── Screen Reader Only ────────────────────────────────────────────────── */
+.sr-only,
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* ARIA live region base styles */
+[aria-live] { position: relative; }
+
+/* ─── Touch Target Compliance (44×44px minimum) ─────────────────────────── */
+button,
+[role="button"],
+a,
+input[type="checkbox"],
+input[type="radio"],
+.nav-item,
+.mobile-nav-item,
+.tracker-tab,
+.challenge-tab,
+.quick-reply-btn,
+.option-card {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Small inline links can use padding to meet target */
+.card a,
+.about-info a {
+  padding: 4px 0;
+  display: inline-block;
+}
+
+/* ─── High Contrast Mode ────────────────────────────────────────────────── */
+.high-contrast {
+  --eco-text: #FFFFFF;
+  --eco-text-secondary: #E2E8F0;
+  --eco-text-muted: #CBD5E1;
+  --eco-bg: #000000;
+  --eco-surface: #111111;
+  --eco-surface-light: #222222;
+  --eco-border: #888888;
+  --glass-bg: rgba(17, 17, 17, 0.98);
+  --glass-border: rgba(136, 136, 136, 0.6);
+}
+
+.high-contrast .card,
+.high-contrast .stat-card,
+.high-contrast .challenge-card,
+.high-contrast .insight-card,
+.high-contrast .badge-item {
+  border-width: 2px;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.high-contrast .btn-primary {
+  background: var(--eco-primary);
+  border: 2px solid var(--eco-primary-light);
+}
+
+.high-contrast .btn-secondary {
+  border-width: 2px;
+}
+
+.high-contrast .nav-item.active {
+  border-left-width: 4px;
+}
+
+.high-contrast .comparison-bar-fill {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.high-contrast .gauge-bg {
+  stroke: #444;
+}
+
+/* Ensure color is never the sole indicator */
+.high-contrast .stat-card-trend.positive::before { content: '↑ '; }
+.high-contrast .stat-card-trend.negative::before { content: '↓ '; }
+
+/* ─── Large Text / Font Size Modes ──────────────────────────────────────── */
+.font-small {
+  font-size: 14px;
+}
+
+.font-large {
+  font-size: 18px;
+}
+
+.font-large .page-title { font-size: 2.2rem; }
+.font-large .stat-card-value { font-size: 2.2rem; }
+.font-large .eco-score-value { font-size: 4rem; }
+
+.font-xlarge {
+  font-size: 20px;
+}
+
+.font-xlarge .page-title { font-size: 2.5rem; }
+.font-xlarge .stat-card-value { font-size: 2.5rem; }
+.font-xlarge .eco-score-value { font-size: 4.5rem; }
+.font-xlarge .nav-label { font-size: 1rem; }
+
+.large-text {
+  font-size: 18px;
+}
+
+/* ─── Reduced Motion ────────────────────────────────────────────────────── */
+.reduced-motion *,
+.reduced-motion *::before,
+.reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* OS-level preference support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── OS Contrast Preference ────────────────────────────────────────────── */
+@media (prefers-contrast: more) {
+  :root {
+    --eco-border: #999;
+    --eco-text-muted: #AAA;
+    --glass-border: rgba(153, 153, 153, 0.5);
+  }
+
+  .card,
+  .stat-card,
+  .challenge-card,
+  .insight-card {
+    border-width: 2px;
+  }
+}
+
+/* ─── OS Color Scheme Preference ────────────────────────────────────────── */
+@media (prefers-color-scheme: light) {
+  /* 
+   * Auto light mode is handled via JS applying .light-mode class.
+   * This media query only applies as a fallback if JS hasn't loaded yet.
+   * The .light-mode class in variables.css overrides colors.
+   */
+}
+
+/* ─── Print Styles ──────────────────────────────────────────────────────── */
+@media print {
+  .sidebar,
+  .mobile-nav,
+  .skip-nav,
+  .toast-container,
+  .modal-container,
+  .btn,
+  .chat-input-area,
+  .quick-actions {
+    display: none !important;
+  }
+
+  .main-content {
+    margin: 0;
+    padding: 0;
+  }
+
+  .app-layout {
+    display: block;
+  }
+
+  body {
+    background: white;
+    color: black;
+  }
+
+  .card,
+  .stat-card {
+    border: 1px solid #ccc;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+}

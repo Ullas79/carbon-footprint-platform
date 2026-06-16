@@ -1,0 +1,388 @@
+/* ==========================================================================
+   EcoTrack — Design Tokens (variables.css)
+   ==========================================================================
+   
+   A comprehensive design token system built on CSS Custom Properties.
+   Every visual decision in the platform flows from this single source of truth.
+   
+   Sections:
+     1. Color Palette — Brand, semantic, and neutral colors
+     2. Dark Theme (default) — All surface, text, and border tokens
+     3. Light Theme (.light-mode) — Full light-mode overrides
+     4. Typography — Font families, fluid sizes, weights, line-heights
+     5. Spacing Scale — Consistent 4px-based spacing
+     6. Border Radius — From subtle to pill
+     7. Shadows — Depth levels with brand-tinted glow
+     8. Transitions — Duration & easing tokens
+     9. Z-Index Scale — Layering system
+    10. Glassmorphism — Frosted-glass effect tokens
+    11. Layout — Container widths, sidebar, breakpoints
+    12. Miscellaneous — Scrollbar, focus rings, opacity
+
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. COLOR PALETTE
+   --------------------------------------------------------------------------
+   Core brand colors and their tints/shades.
+   Semantic colors for success, warning, danger feedback.
+   -------------------------------------------------------------------------- */
+
+:root {
+
+  /* ── Brand: Emerald Green ──────────────────────────────────────────────── */
+  --eco-primary:          #10B981;
+  --eco-primary-dark:     #059669;
+  --eco-primary-darker:   #047857;
+  --eco-primary-light:    #34D399;
+  --eco-primary-lighter:  #6EE7B7;
+  --eco-primary-ghost:    rgba(16, 185, 129, 0.10);
+  --eco-primary-glow:     rgba(16, 185, 129, 0.25);
+  --eco-primary-rgb:      16, 185, 129;        /* For rgba() usage */
+
+  /* ── Accent: Blue ──────────────────────────────────────────────────────── */
+  --eco-accent:           #3B82F6;
+  --eco-accent-dark:      #2563EB;
+  --eco-accent-light:     #60A5FA;
+  --eco-accent-ghost:     rgba(59, 130, 246, 0.10);
+  --eco-accent-rgb:       59, 130, 246;
+
+  /* ── Semantic ──────────────────────────────────────────────────────────── */
+  --eco-success:          #22C55E;
+  --eco-success-dark:     #16A34A;
+  --eco-success-ghost:    rgba(34, 197, 94, 0.10);
+
+  --eco-warning:          #F59E0B;
+  --eco-warning-dark:     #D97706;
+  --eco-warning-ghost:    rgba(245, 158, 11, 0.10);
+
+  --eco-danger:           #EF4444;
+  --eco-danger-dark:      #DC2626;
+  --eco-danger-ghost:     rgba(239, 68, 68, 0.10);
+
+  --eco-info:             #06B6D4;
+  --eco-info-ghost:       rgba(6, 182, 212, 0.10);
+
+
+  /* ── Gradients ─────────────────────────────────────────────────────────── */
+  --eco-gradient-primary:  linear-gradient(135deg, #10B981 0%, #059669 100%);
+  --eco-gradient-accent:   linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+  --eco-gradient-hero:     linear-gradient(135deg, #10B981 0%, #3B82F6 100%);
+  --eco-gradient-danger:   linear-gradient(135deg, #EF4444 0%, #F97316 100%);
+  --eco-gradient-dark:     linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+  --eco-gradient-glow:     radial-gradient(ellipse at 50% 0%, rgba(16,185,129,0.15) 0%, transparent 70%);
+
+
+  /* ────────────────────────────────────────────────────────────────────────
+     2. DARK THEME (default)
+     ──────────────────────────────────────────────────────────────────────── */
+
+  /* ── Surfaces ──────────────────────────────────────────────────────────── */
+  --eco-bg:               #0F172A;
+  --eco-bg-alt:           #0B1120;
+  --eco-surface:          #1E293B;
+  --eco-surface-light:    #334155;
+  --eco-surface-hover:    #3B4A63;
+  --eco-surface-active:   #475569;
+
+  /* ── Borders ───────────────────────────────────────────────────────────── */
+  --eco-border:           #475569;
+  --eco-border-light:     rgba(148, 163, 184, 0.12);
+  --eco-border-focus:     var(--eco-primary);
+
+  /* ── Text ──────────────────────────────────────────────────────────────── */
+  --eco-text:             #F8FAFC;
+  --eco-text-secondary:   #94A3B8;
+  --eco-text-muted:       #64748B;
+  --eco-text-inverse:     #0F172A;
+  --eco-text-on-primary:  #FFFFFF;
+
+  /* ── Overlay ───────────────────────────────────────────────────────────── */
+  --eco-overlay:          rgba(0, 0, 0, 0.60);
+  --eco-overlay-light:    rgba(0, 0, 0, 0.30);
+
+
+  /* ────────────────────────────────────────────────────────────────────────
+     4. TYPOGRAPHY
+     ──────────────────────────────────────────────────────────────────────── */
+
+  /* ── Font Families ─────────────────────────────────────────────────────── */
+  --font-heading:   'Outfit', system-ui, -apple-system, sans-serif;
+  --font-body:      'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:      'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+
+  /* ── Font Sizes (Fluid / clamp) ────────────────────────────────────────── 
+     Uses clamp() to scale between min and max across viewports.
+     Format: clamp(min, preferred, max)                                     */
+  --text-xs:    clamp(0.6875rem, 0.65rem + 0.15vw, 0.75rem);    /* 11–12px */
+  --text-sm:    clamp(0.75rem,   0.70rem + 0.20vw, 0.875rem);   /* 12–14px */
+  --text-base:  clamp(0.875rem,  0.82rem + 0.25vw, 1rem);       /* 14–16px */
+  --text-lg:    clamp(1rem,      0.93rem + 0.35vw, 1.125rem);   /* 16–18px */
+  --text-xl:    clamp(1.125rem,  1.00rem + 0.50vw, 1.25rem);    /* 18–20px */
+  --text-2xl:   clamp(1.25rem,   1.05rem + 0.80vw, 1.5rem);     /* 20–24px */
+  --text-3xl:   clamp(1.5rem,    1.20rem + 1.20vw, 1.875rem);   /* 24–30px */
+  --text-4xl:   clamp(1.875rem,  1.50rem + 1.50vw, 2.25rem);    /* 30–36px */
+  --text-5xl:   clamp(2.25rem,   1.75rem + 2.00vw, 3rem);       /* 36–48px */
+  --text-6xl:   clamp(2.75rem,   2.00rem + 3.00vw, 3.75rem);    /* 44–60px */
+
+  /* ── Font Weights ──────────────────────────────────────────────────────── */
+  --weight-light:     300;
+  --weight-regular:   400;
+  --weight-medium:    500;
+  --weight-semibold:  600;
+  --weight-bold:      700;
+
+  /* ── Line Heights ──────────────────────────────────────────────────────── */
+  --leading-none:    1;
+  --leading-tight:   1.2;
+  --leading-snug:    1.375;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose:   2;
+
+  /* ── Letter Spacing ────────────────────────────────────────────────────── */
+  --tracking-tighter: -0.05em;
+  --tracking-tight:   -0.025em;
+  --tracking-normal:   0em;
+  --tracking-wide:     0.025em;
+  --tracking-wider:    0.05em;
+  --tracking-widest:   0.1em;
+
+
+  /* ────────────────────────────────────────────────────────────────────────
+     5. SPACING SCALE
+     ──────────────────────────────────────────────────────────────────────── 
+     Based on a 4px grid. --space-1 = 4px, --space-16 = 64px               */
+  --space-0:   0;
+  --space-px:  1px;
+  --space-0-5: 2px;
+  --space-1:   4px;
+  --space-1-5: 6px;
+  --space-2:   8px;
+  --space-2-5: 10px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   20px;
+  --space-6:   24px;
+  --space-7:   28px;
+  --space-8:   32px;
+  --space-9:   36px;
+  --space-10:  40px;
+  --space-11:  44px;
+  --space-12:  48px;
+  --space-14:  56px;
+  --space-16:  64px;
+  --space-20:  80px;
+  --space-24:  96px;
+
+
+  /* ────────────────────────────────────────────────────────────────────────
+     6. BORDER RADIUS
+     ──────────────────────────────────────────────────────────────────────── */
+  --radius-xs:    4px;
+  --radius-sm:    6px;
+  --radius-md:    12px;
+  --radius-lg:    16px;
+  --radius-xl:    24px;
+  --radius-2xl:   32px;
+  --radius-full:  9999px;
+
+
+  /* ────────────────────────────────────────────────────────────────────────
+     7. SHADOWS
+     ──────────────────────────────────────────────────────────────────────── 
+     Multi-layer shadows with a subtle green tint for brand identity.       */
+  --shadow-xs:
+    0 1px 2px rgba(0, 0, 0, 0.20);
+  --shadow-sm:
+    0 1px 3px rgba(0, 0, 0, 0.25),
+    0 1px 2px rgba(0, 0, 0, 0.15);
+  --shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.30),
+    0 2px 4px -2px rgba(0, 0, 0, 0.20);
+  --shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.35),
+    0 4px 6px  -4px rgba(0, 0, 0, 0.25);
+  --shadow-xl:
+    0 20px 25px -5px rgba(0, 0, 0, 0.40),
+    0 8px 10px  -6px rgba(0, 0, 0, 0.30);
+  --shadow-2xl:
+    0 25px 50px -12px rgba(0, 0, 0, 0.60);
+
+  /* Green-tinted glow shadows for brand elements */
+  --shadow-glow-sm:
+    0 0 10px rgba(16, 185, 129, 0.15),
+    0 0 20px rgba(16, 185, 129, 0.05);
+  --shadow-glow-md:
+    0 0 15px rgba(16, 185, 129, 0.20),
+    0 0 30px rgba(16, 185, 129, 0.10);
+  --shadow-glow-lg:
+    0 0 20px rgba(16, 185, 129, 0.30),
+    0 0 45px rgba(16, 185, 129, 0.15);
+  --shadow-glow-xl:
+    0 0 30px rgba(16, 185, 129, 0.35),
+    0 4px 60px rgba(16, 185, 129, 0.20);
+
+  /* Inset shadows for pressed states */
+  --shadow-inner:
+    inset 0 2px 4px rgba(0, 0, 0, 0.30);
+  --shadow-inner-glow:
+    inset 0 1px 2px rgba(16, 185, 129, 0.15);
+
+
+  /* ────────────────────────────────────────────────────────────────────────
+     8. TRANSITIONS
+     ──────────────────────────────────────────────────────────────────────── */
+  --transition-fast:    150ms ease;
+  --transition-base:    300ms ease;
+  --transition-slow:    500ms ease;
+  --transition-slower:  700ms ease;
+  --transition-spring:  500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --ease-in:      cubic-bezier(0.4, 0, 1, 1);
+  --ease-out:     cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out:  cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce:  cubic-bezier(0.34, 1.56, 0.64, 1);
+
+
+  /* ────────────────────────────────────────────────────────────────────────
+     9. Z-INDEX SCALE
+     ──────────────────────────────────────────────────────────────────────── 
+     A structured layering system to prevent z-index wars.                  */
+  --z-base:      0;
+  --z-dropdown:  100;
+  --z-sticky:    200;
+  --z-sidebar:   300;
+  --z-overlay:   400;
+  --z-modal:     500;
+  --z-popover:   600;
+  --z-toast:     700;
+  --z-tooltip:   800;
+  --z-max:       9999;
+
+
+  /* ────────────────────────────────────────────────────────────────────────
+     10. GLASSMORPHISM
+     ──────────────────────────────────────────────────────────────────────── 
+     Frosted-glass effect tokens for cards and surfaces.                    */
+  --glass-bg:          rgba(30, 41, 59, 0.60);
+  --glass-bg-heavy:    rgba(30, 41, 59, 0.80);
+  --glass-bg-light:    rgba(30, 41, 59, 0.40);
+  --glass-border:      rgba(148, 163, 184, 0.08);
+  --glass-border-hover: rgba(148, 163, 184, 0.15);
+  --glass-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.30),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --glass-blur:        16px;
+  --glass-blur-heavy:  24px;
+  --glass-blur-light:  8px;
+
+
+  /* ────────────────────────────────────────────────────────────────────────
+     11. LAYOUT
+     ──────────────────────────────────────────────────────────────────────── */
+  --sidebar-width:       280px;
+  --sidebar-collapsed:   72px;
+  --header-height:       64px;
+  --bottom-nav-height:   64px;
+  --container-max:       1440px;
+  --content-max:         1200px;
+
+  /* Breakpoints (for reference — used in media queries) */
+  --bp-mobile:    320px;
+  --bp-tablet:    768px;
+  --bp-desktop:   1024px;
+  --bp-wide:      1440px;
+
+
+  /* ────────────────────────────────────────────────────────────────────────
+     12. MISCELLANEOUS
+     ──────────────────────────────────────────────────────────────────────── */
+
+  /* Scrollbar */
+  --scrollbar-width:     6px;
+  --scrollbar-track:     var(--eco-bg);
+  --scrollbar-thumb:     var(--eco-surface-light);
+  --scrollbar-thumb-hover: var(--eco-primary);
+
+  /* Focus ring */
+  --focus-ring-width:    2px;
+  --focus-ring-color:    var(--eco-primary);
+  --focus-ring-offset:   2px;
+
+  /* Opacity */
+  --opacity-disabled:    0.5;
+  --opacity-hover:       0.85;
+  --opacity-placeholder: 0.45;
+
+  /* Backdrop */
+  --backdrop-blur:       blur(var(--glass-blur));
+}
+
+
+/* ==========================================================================
+   3. LIGHT THEME (.light-mode)
+   ==========================================================================
+   Applied via <body class="light-mode"> or <html class="light-mode">.
+   Overrides only the tokens that change; brand colors remain the same.
+   ========================================================================== */
+
+.light-mode {
+  /* ── Surfaces ──────────────────────────────────────────────────────────── */
+  --eco-bg:               #F8FAFC;
+  --eco-bg-alt:           #F1F5F9;
+  --eco-surface:          #FFFFFF;
+  --eco-surface-light:    #F1F5F9;
+  --eco-surface-hover:    #E2E8F0;
+  --eco-surface-active:   #CBD5E1;
+
+  /* ── Borders ───────────────────────────────────────────────────────────── */
+  --eco-border:           #CBD5E1;
+  --eco-border-light:     rgba(100, 116, 139, 0.12);
+
+  /* ── Text ──────────────────────────────────────────────────────────────── */
+  --eco-text:             #0F172A;
+  --eco-text-secondary:   #475569;
+  --eco-text-muted:       #94A3B8;
+  --eco-text-inverse:     #F8FAFC;
+
+  /* ── Overlay ───────────────────────────────────────────────────────────── */
+  --eco-overlay:          rgba(15, 23, 42, 0.50);
+  --eco-overlay-light:    rgba(15, 23, 42, 0.20);
+
+  /* ── Shadows (lighter for light mode) ──────────────────────────────────── */
+  --shadow-xs:
+    0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm:
+    0 1px 3px rgba(0, 0, 0, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.08),
+    0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  --shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.10),
+    0 4px 6px  -4px rgba(0, 0, 0, 0.05);
+  --shadow-xl:
+    0 20px 25px -5px rgba(0, 0, 0, 0.10),
+    0 8px 10px  -6px rgba(0, 0, 0, 0.04);
+  --shadow-2xl:
+    0 25px 50px -12px rgba(0, 0, 0, 0.15);
+
+  /* ── Glassmorphism (light variant) ─────────────────────────────────────── */
+  --glass-bg:          rgba(255, 255, 255, 0.70);
+  --glass-bg-heavy:    rgba(255, 255, 255, 0.85);
+  --glass-bg-light:    rgba(255, 255, 255, 0.50);
+  --glass-border:      rgba(0, 0, 0, 0.06);
+  --glass-border-hover: rgba(0, 0, 0, 0.10);
+  --glass-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.70);
+
+  /* ── Scrollbar ─────────────────────────────────────────────────────────── */
+  --scrollbar-track:     #F1F5F9;
+  --scrollbar-thumb:     #CBD5E1;
+
+  /* ── Gradients ─────────────────────────────────────────────────────────── */
+  --eco-gradient-dark:   linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%);
+}
