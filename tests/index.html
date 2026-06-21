@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoTrack Test Suite 🧪</title>
+  
+  <!-- Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --bg-surface: #1e293b;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #10b981;
+      --primary-glow: rgba(16, 185, 129, 0.15);
+      --danger: #f43f5e;
+      --danger-glow: rgba(244, 63, 94, 0.15);
+      --warning: #f59e0b;
+      --warning-glow: rgba(245, 158, 11, 0.15);
+      --font-sans: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      padding: 2rem 1.5rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* Header styling with glassmorphism */
+    header {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .title-area h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      margin-bottom: 0.25rem;
+      background: linear-gradient(135deg, #34d399, #059669);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .title-area p {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    .btn-run {
+      background-color: var(--primary);
+      color: #0f172a;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-weight: 700;
+      font-size: 0.875rem;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px var(--primary-glow);
+    }
+
+    .btn-run:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-run:active {
+      transform: translateY(1px);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+    }
+
+    .stat-card.passed::before { background-color: var(--primary); }
+    .stat-card.failed::before { background-color: var(--danger); }
+    .stat-card.total::before { background-color: var(--warning); }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+      font-size: 2.25rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      line-height: 1;
+    }
+
+    .stat-card.passed .stat-value { color: var(--primary); }
+    .stat-card.failed .stat-value { color: var(--danger); }
+    .stat-card.total .stat-value { color: var(--warning); }
+
+    /* Suite results styling */
+    .suite-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .suite-header {
+      padding: 1.25rem 1.5rem;
+      background-color: rgba(30, 41, 59, 0.4);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .suite-title {
+      font-size: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .suite-status-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.625rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
+
+    .suite-status-badge.passed {
+      background-color: var(--primary-glow);
+      color: var(--primary);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .suite-status-badge.failed {
+      background-color: var(--danger-glow);
+      color: var(--danger);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    .suite-body {
+      padding: 0.5rem 0;
+    }
+
+    .test-item {
+      padding: 0.875rem 1.5rem;
+      border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      transition: background-color 0.2s ease;
+    }
+
+    .test-item:last-child {
+      border-bottom: none;
+    }
+
+    .test-item:hover {
+      background-color: rgba(15, 23, 42, 0.3);
+    }
+
+    .test-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .test-name {
+      font-size: 0.925rem;
+      font-weight: 500;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .test-assertions {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background-color: rgba(15, 23, 42, 0.5);
+      padding: 0.125rem 0.375rem;
+      border-radius: 4px;
+    }
+
+    .test-status-icon {
+      flex-shrink: 0;
+      font-size: 1.125rem;
+    }
+
+    .test-status-icon.passed { color: var(--primary); }
+    .test-status-icon.failed { color: var(--danger); }
+
+    .test-error {
+      background-color: var(--danger-glow);
+      border-left: 3px solid var(--danger);
+      padding: 0.75rem 1rem;
+      border-radius: 0 6px 6px 0;
+      margin-top: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #fda4af;
+      word-break: break-all;
+    }
+
+    /* Utilities */
+    .hide { display: none; }
+  </style>
+
+  <!-- Load EcoTrack Modules in Dependency Order -->
+  <script src="../js/utils.js?v=2"></script>
+  <script src="../js/store.js?v=2"></script>
+  <script src="../js/calculator.js?v=2"></script>
+  <script src="../js/insights.js?v=2"></script>
+  <script src="../js/challenges.js?v=2"></script>
+  <script src="../js/tracker.js?v=2"></script>
+  <script src="../js/dashboard.js?v=2"></script>
+  <script src="../js/assistant.js?v=2"></script>
+  <script src="../js/onboarding.js?v=2"></script>
+  <script src="../js/app.js?v=2"></script>
+  
+  <!-- Load Test Runner Definition -->
+  <script src="./test-runner.js?v=2"></script>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="title-area">
+        <h1>EcoTrack Test Suite 🧪</h1>
+        <p>Execution of unit, integration, and validation tests</p>
+      </div>
+      <button class="btn-run" id="btn-run-tests">
+        <span>🔄</span> Re-run Test Suite
+      </button>
+    </header>
+
+    <div class="stats-grid">
+      <div class="stat-card total">
+        <div class="stat-label">Total Tests</div>
+        <div class="stat-value" id="stat-total">0</div>
+      </div>
+      <div class="stat-card passed">
+        <div class="stat-label">Passed</div>
+        <div class="stat-value" id="stat-passed">0</div>
+      </div>
+      <div class="stat-card failed">
+        <div class="stat-label">Failed</div>
+        <div class="stat-value" id="stat-failed">0</div>
+      </div>
+    </div>
+
+    <div id="test-results-container">
+      <!-- Suites will render here -->
+    </div>
+  </div>
+
+  <script>
+    async function executeTests() {
+      const resultsContainer = document.getElementById('test-results-container');
+      resultsContainer.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-muted);">Running test suite...</div>';
+
+      // Run tests
+      const result = await TestRunner.run();
+
+      // Update counters
+      document.getElementById('stat-total').textContent = result.passed + result.failed;
+      document.getElementById('stat-passed').textContent = result.passed;
+      document.getElementById('stat-failed').textContent = result.failed;
+
+      // Render Suites
+      resultsContainer.innerHTML = '';
+      result.reports.forEach((suite, index) => {
+        const suitePassed = suite.tests.every(t => t.passed);
+        const suiteCard = document.createElement('div');
+        suiteCard.className = 'suite-card';
+
+        suiteCard.innerHTML = `
+          <div class="suite-header" id="suite-header-${index}">
+            <div class="suite-title">
+              <span>${suitePassed ? '📦' : '⚠️'}</span>
+              <span>${suite.name}</span>
+            </div>
+            <span class="suite-status-badge ${suitePassed ? 'passed' : 'failed'}">
+              ${suitePassed ? 'Passed' : 'Failed'}
+            </span>
+          </div>
+          <div class="suite-body" id="suite-body-${index}">
+            ${suite.tests.map(test => `
+              <div class="test-item">
+                <div class="test-header">
+                  <div class="test-name">
+                    <span class="test-status-icon ${test.passed ? 'passed' : 'failed'}">
+                      ${test.passed ? '✓' : '✗'}
+                    </span>
+                    <span>${test.name}</span>
+                  </div>
+                  <span class="test-assertions">${test.assertions} assertions</span>
+                </div>
+                ${test.passed ? '' : `<div class="test-error">${test.error}</div>`}
+              </div>
+            `).join('')}
+          </div>
+        `;
+
+        resultsContainer.appendChild(suiteCard);
+
+        // Accordion functionality
+        const header = document.getElementById(`suite-header-${index}`);
+        const body = document.getElementById(`suite-body-${index}`);
+        header.addEventListener('click', () => {
+          body.classList.toggle('hide');
+        });
+      });
+    }
+
+    // Bind re-run button
+    document.getElementById('btn-run-tests').addEventListener('click', executeTests);
+
+    // Initial run
+    document.addEventListener('DOMContentLoaded', executeTests);
+  </script>
+</body>
+</html>

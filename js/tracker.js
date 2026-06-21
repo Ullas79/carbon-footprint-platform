@@ -11,10 +11,10 @@
  * @requires EcoTrack.Challenges
  * @requires EcoTrack.Utils
  */
-;(function (global) {
-  'use strict';
+window.EcoTrack = window.EcoTrack || {};
 
-  const EcoTrack = global.EcoTrack || (global.EcoTrack = {});
+EcoTrack.Tracker = (() => {
+  'use strict';
 
   // ──────────────────────────────────────────────────
   // Constants
@@ -124,85 +124,13 @@
   // Helpers
   // ──────────────────────────────────────────────────
 
-  /**
-   * Sanitise a user-provided string to prevent XSS when inserted into HTML.
-   * @param {string} str
-   * @returns {string}
-   */
-  function _escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-  }
-
-  /**
-   * Return the start-of-day Date for a given date (or today).
-   * @param {Date} [date=new Date()]
-   * @returns {Date}
-   */
-  function _startOfDay(date = new Date()) {
-    const d = new Date(date);
-    d.setHours(0, 0, 0, 0);
-    return d;
-  }
-
-  /**
-   * Generate a unique id.
-   * @returns {string}
-   */
-  function _uid() {
-    return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
-  }
-
-  /**
-   * Show a lightweight toast notification.
-   * Delegates to EcoTrack.Utils.showToast if available, otherwise falls back
-   * to a simple ephemeral <div>.
-   * @param {string} message
-   * @param {'success'|'info'|'warning'|'error'} [type='success']
-   */
-  function _toast(message, type = 'success') {
-    if (EcoTrack.Utils && typeof EcoTrack.Utils.showToast === 'function') {
-      EcoTrack.Utils.showToast(message, type);
-      return;
-    }
-    // Minimal fallback
-    const el = document.createElement('div');
-    el.setAttribute('role', 'status');
-    el.setAttribute('aria-live', 'polite');
-    el.className = 'eco-toast eco-toast--' + type;
-    el.textContent = message;
-    Object.assign(el.style, {
-      position: 'fixed', bottom: '24px', right: '24px', zIndex: 9999,
-      padding: '12px 20px', borderRadius: '8px', color: '#fff',
-      backgroundColor: type === 'error' ? '#EF4444' : '#22C55E',
-      fontFamily: "'Inter', sans-serif", fontSize: '14px',
-      boxShadow: '0 4px 12px rgba(0,0,0,.3)', transition: 'opacity .3s',
-    });
-    document.body.appendChild(el);
-    setTimeout(() => { el.style.opacity = '0'; }, 2500);
-    setTimeout(() => { el.remove(); }, 3000);
-  }
-
-  /**
-   * Debounce helper — delays invoking `fn` until `wait` ms after the last call.
-   * @param {Function} fn
-   * @param {number} wait
-   * @returns {Function}
-   */
-  function _debounce(fn, wait = 300) {
-    let timer;
-    return function (...args) {
-      clearTimeout(timer);
-      timer = setTimeout(() => fn.apply(this, args), wait);
-    };
-  }
+  // Removed _escapeHtml, _startOfDay, _uid, _toast, _debounce in favour of EcoTrack.Utils
 
   // ──────────────────────────────────────────────────
   // Public API
   // ──────────────────────────────────────────────────
 
-  EcoTrack.Tracker = {
+  return Object.freeze({
 
     /* ───── Initialisation ───── */
 
@@ -269,17 +197,17 @@
                         class="tracker-tab ${isActive ? 'active' : ''}"
                         aria-selected="${isActive}"
                         aria-controls="panel-${cat}"
-                        data-category="${_escapeHtml(cat)}"
+                        data-category="${EcoTrack.Utils.sanitizeInput(cat)}"
                         tabindex="${isActive ? 0 : -1}"
                       >
                         <span class="tracker-tab-icon">${c.icon}</span>
-                        <span class="tracker-tab-label">${_escapeHtml(c.name)}</span>
+                        <span class="tracker-tab-label">${EcoTrack.Utils.sanitizeInput(c.name)}</span>
                       </button>`;
                   }).join('')}
                 </div>
 
                 <!-- Category panel (type selector + input) -->
-                <div id="category-panel" role="tabpanel" aria-labelledby="tab-${_escapeHtml(_selectedCategory)}">
+                <div id="category-panel" role="tabpanel" aria-labelledby="tab-${EcoTrack.Utils.sanitizeInput(_selectedCategory)}">
                 </div>
               </div>
             </div>
@@ -353,7 +281,7 @@
             <label for="activity-type" class="input-label">Activity Type</label>
             <select id="activity-type" class="select" aria-required="true">
               ${cat.types.map(t =>
-                `<option value="${_escapeHtml(t.value)}">${_escapeHtml(t.label)}</option>`
+                `<option value="${EcoTrack.Utils.sanitizeInput(t.value)}">${EcoTrack.Utils.sanitizeInput(t.label)}</option>`
               ).join('')}
             </select>
           </div>
@@ -361,7 +289,7 @@
           <!-- Value input -->
           <div class="input-group" style="margin-bottom: var(--space-5);">
             <label for="activity-value" class="input-label">
-              Amount <span class="input-help">(${_escapeHtml(cat.unit)})</span>
+              Amount <span class="input-help">(${EcoTrack.Utils.sanitizeInput(cat.unit)})</span>
             </label>
             <input
               type="number"
@@ -400,7 +328,7 @@
       // Debounced value input validation feedback
       const valueInput = document.getElementById('activity-value');
       if (valueInput) {
-        valueInput.addEventListener('input', _debounce((e) => {
+        valueInput.addEventListener('input', EcoTrack.Utils.debounce((e) => {
           const v = parseFloat(e.target.value);
           e.target.classList.toggle('input--error', isNaN(v) || v < 0);
         }, 250));
@@ -428,20 +356,20 @@
       try {
         // ── Input validation ──
         if (!CATEGORIES[category]) {
-          _toast('Invalid category.', 'error');
+          EcoTrack.Utils.showToast('Invalid category.', 'error');
           return;
         }
         if (!CATEGORIES[category].types.find(t => t.value === type)) {
-          _toast('Invalid activity type.', 'error');
+          EcoTrack.Utils.showToast('Invalid activity type.', 'error');
           return;
         }
         if (isNaN(value) || value <= 0) {
-          _toast('Please enter a positive number.', 'warning');
+          EcoTrack.Utils.showToast('Please enter a positive number.', 'warning');
           return;
         }
         // Cap value to prevent unreasonable entries
         if (value > 10000) {
-          _toast('Value seems too high. Please double-check.', 'warning');
+          EcoTrack.Utils.showToast('Value seems too high. Please double-check.', 'warning');
           return;
         }
 
@@ -455,7 +383,7 @@
 
         // ── Build activity object ──
         const activity = {
-          id: _uid(),
+          id: EcoTrack.Utils.generateId(),
           timestamp: new Date().toISOString(),
           category: category,
           type: type,
@@ -484,13 +412,13 @@
 
         // ── User feedback ──
         const label = this.getActivityLabel(category, type);
-        _toast(`Logged ${label}: ${co2.toFixed(2)} kg CO₂`, 'success');
+        EcoTrack.Utils.showToast(`Logged ${label}: ${co2.toFixed(2)} kg CO₂`, 'success');
 
         // ── Re-render affected sections ──
         this._refreshUI();
       } catch (err) {
         console.error('[EcoTrack.Tracker] logActivity error:', err);
-        _toast('Something went wrong. Please try again.', 'error');
+        EcoTrack.Utils.showToast('Something went wrong. Please try again.', 'error');
       }
     },
 
@@ -509,7 +437,7 @@
           const activities = EcoTrack.Store.getActivities().filter(a => a.id !== id);
           EcoTrack.Store.saveActivities(activities);
         }
-        _toast('Activity removed.', 'info');
+        EcoTrack.Utils.showToast('Activity removed.', 'info');
         this._refreshUI();
       } catch (err) {
         console.error('[EcoTrack.Tracker] deleteActivity error:', err);
@@ -527,7 +455,7 @@
         const all = (EcoTrack.Store && typeof EcoTrack.Store.getActivities === 'function')
           ? EcoTrack.Store.getActivities()
           : [];
-        const todayStart = _startOfDay().getTime();
+        const todayStart = EcoTrack.Utils.startOfDay();
         return all.filter(a => new Date(a.timestamp).getTime() >= todayStart);
       } catch (err) {
         console.error('[EcoTrack.Tracker] getTodayActivities error:', err);
@@ -546,7 +474,7 @@
           : [];
         const now = new Date();
         const dayOfWeek = now.getDay() || 7;            // Mon=1 … Sun=7
-        const monday = _startOfDay(now);
+        const monday = new Date(EcoTrack.Utils.startOfDay(now));
         monday.setDate(monday.getDate() - dayOfWeek + 1);
         const mondayMs = monday.getTime();
         return all.filter(a => new Date(a.timestamp).getTime() >= mondayMs);
@@ -593,15 +521,15 @@
               <li class="activity-feed-item" role="listitem">
                 <div class="activity-feed-icon" style="background-color: rgba(16, 185, 129, 0.1); color: ${cat.color || 'var(--eco-primary)'};">${cat.icon || '📌'}</div>
                 <div class="activity-feed-info">
-                  <div class="activity-feed-name">${_escapeHtml(label)}</div>
+                  <div class="activity-feed-name">${EcoTrack.Utils.sanitizeInput(label)}</div>
                   <div class="activity-feed-meta">
-                    ${a.value} ${_escapeHtml(a.unit || '')} · ${time}
+                    ${a.value} ${EcoTrack.Utils.sanitizeInput(a.unit || '')} · ${time}
                   </div>
                 </div>
                 <span class="activity-feed-co2">${(a.co2 || 0).toFixed(1)} kg</span>
                 <button class="activity-feed-delete"
-                        aria-label="Delete ${_escapeHtml(label)} activity"
-                        data-id="${_escapeHtml(a.id)}"
+                        aria-label="Delete ${EcoTrack.Utils.sanitizeInput(label)} activity"
+                        data-id="${EcoTrack.Utils.sanitizeInput(a.id)}"
                         title="Remove">
                   🗑️
                 </button>
@@ -684,7 +612,7 @@
         }
 
         container.innerHTML = `
-          <h3 style="font-size: 0.95rem; font-weight: 600; color: var(--eco-text); margin-bottom: var(--space-3); text-align: center;">📅 ${_escapeHtml(monthName)}</h3>
+          <h3 style="font-size: 0.95rem; font-weight: 600; color: var(--eco-text); margin-bottom: var(--space-3); text-align: center;">📅 ${EcoTrack.Utils.sanitizeInput(monthName)}</h3>
           
           <div class="calendar-heatmap" role="grid" aria-label="Calendar heatmap grid" style="margin: 0 auto var(--space-4) auto;">
             ${dayHeaders.map(h => `<div class="calendar-day-label" role="columnheader" style="font-weight: 600;">${h}</div>`).join('')}
@@ -733,13 +661,13 @@
         <div class="quick-actions" role="group" aria-label="Quick log buttons" style="grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));">
           ${QUICK_LOGS.map(ql => `
             <button class="quick-action-btn"
-                    data-category="${_escapeHtml(ql.category)}"
-                    data-type="${_escapeHtml(ql.type)}"
+                    data-category="${EcoTrack.Utils.sanitizeInput(ql.category)}"
+                    data-type="${EcoTrack.Utils.sanitizeInput(ql.type)}"
                     data-value="${ql.value}"
-                    aria-label="Quick log: ${_escapeHtml(ql.label)}"
-                    title="${_escapeHtml(ql.label)} — ${ql.value} ${CATEGORIES[ql.category]?.unit || ''}">
+                    aria-label="Quick log: ${EcoTrack.Utils.sanitizeInput(ql.label)}"
+                    title="${EcoTrack.Utils.sanitizeInput(ql.label)} — ${ql.value} ${CATEGORIES[ql.category]?.unit || ''}">
               <span class="quick-action-icon" aria-hidden="true">${ql.icon}</span>
-              <span class="quick-action-label">${_escapeHtml(ql.label)}</span>
+              <span class="quick-action-label">${EcoTrack.Utils.sanitizeInput(ql.label)}</span>
             </button>
           `).join('')}
         </div>
@@ -853,6 +781,5 @@
       this.renderActivityList(todayActivities);
       this.renderCalendarHeatmap();
     },
-  };
-
-})(typeof window !== 'undefined' ? window : globalThis);
+  });
+})();

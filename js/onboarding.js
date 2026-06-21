@@ -10,11 +10,10 @@
  * @requires EcoTrack.Utils
  * @requires EcoTrack.Calculator
  */
-;(function(global) {
-  'use strict';
+window.EcoTrack = window.EcoTrack || {};
 
-  // Ensure namespace exists
-  const EcoTrack = global.EcoTrack = global.EcoTrack || {};
+EcoTrack.Onboarding = (() => {
+  'use strict';
 
   /* =========================================================================
    * CONSTANTS
@@ -100,7 +99,7 @@
    * ONBOARDING MODULE
    * ========================================================================= */
 
-  EcoTrack.Onboarding = {
+  return Object.freeze({
 
     /* -----------------------------------------------------------------------
      * Initialization
@@ -170,7 +169,7 @@
         let html = '<div class="onboarding-card">';
         html += this._renderProgressIndicator(stepNumber);
         html += '<div class="onboarding-step fade-in" role="form" aria-label="' +
-                this._escapeHtml(STEP_TITLES[stepNumber - 1]) + ' step">';
+                EcoTrack.Utils.sanitizeInput(STEP_TITLES[stepNumber - 1]) + ' step">';
 
         // Delegate to the appropriate step renderer
         switch (stepNumber) {
@@ -506,7 +505,7 @@
               </div>
               <div class="results-comparison-item">
                 <span class="results-comparison-value">${(countryAvgKg / 1000).toFixed(1)}t</span>
-                <span class="results-comparison-label">${this._escapeHtml(countryData.name)} avg</span>
+                <span class="results-comparison-label">${EcoTrack.Utils.sanitizeInput(countryData.name)} avg</span>
                 <span class="comparison-diff ${baseline <= countryAvgKg ? 'good' : 'bad'}" style="font-size: 0.65rem; display: block; margin-top: 4px; font-weight: 600; color: ${baseline <= countryAvgKg ? 'var(--eco-success)' : 'var(--eco-danger)'};">${vCountry}</span>
               </div>
               <div class="results-comparison-item">
@@ -636,7 +635,7 @@
       // Build country <option> list
       let countryOptions = '<option value="">-- Select Country --</option>';
       COUNTRIES.forEach(c => {
-        countryOptions += '<option value="' + c.code + '">' + this._escapeHtml(c.name) + '</option>';
+        countryOptions += '<option value="' + c.code + '">' + EcoTrack.Utils.sanitizeInput(c.name) + '</option>';
       });
 
       return `
@@ -1372,18 +1371,6 @@
     },
 
     /**
-     * Escape HTML entities for safe interpolation.
-     * @private
-     * @param {string} str
-     * @returns {string}
-     */
-    _escapeHtml(str) {
-      if (typeof str !== 'string') return '';
-      const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-      return str.replace(/[&<>"']/g, c => map[c]);
-    },
-
-    /**
      * Navigate to the dashboard (or emit an event for an SPA router).
      * @private
      */
@@ -1396,6 +1383,5 @@
         window.location.reload();
       }
     }
-  };
-
-})(typeof window !== 'undefined' ? window : globalThis);
+  });
+})();

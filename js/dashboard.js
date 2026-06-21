@@ -13,10 +13,10 @@
  * @requires EcoTrack.Insights
  * @requires EcoTrack.Utils
  */
-;(function (global) {
-  'use strict';
+window.EcoTrack = window.EcoTrack || {};
 
-  const EcoTrack = global.EcoTrack || (global.EcoTrack = {});
+EcoTrack.Dashboard = (() => {
+  'use strict';
 
   // ──────────────────────────────────────────────────
   // Constants
@@ -59,17 +59,6 @@
   // ──────────────────────────────────────────────────
 
   /**
-   * Sanitise a string for safe HTML insertion.
-   * @param {string} str
-   * @returns {string}
-   */
-  function _esc(str) {
-    const d = document.createElement('div');
-    d.textContent = str;
-    return d.innerHTML;
-  }
-
-  /**
    * Retrieve all activities from the store (safe wrapper).
    * @returns {Object[]}
    */
@@ -77,17 +66,6 @@
     return (EcoTrack.Store && typeof EcoTrack.Store.getActivities === 'function')
       ? EcoTrack.Store.getActivities()
       : [];
-  }
-
-  /**
-   * Return the start-of-day timestamp (ms) for a Date.
-   * @param {Date} [date=new Date()]
-   * @returns {number}
-   */
-  function _startOfDay(date = new Date()) {
-    const d = new Date(date);
-    d.setHours(0, 0, 0, 0);
-    return d.getTime();
   }
 
   /**
@@ -129,7 +107,7 @@
   // Public API
   // ──────────────────────────────────────────────────
 
-  EcoTrack.Dashboard = {
+  return Object.freeze({
 
     /* ───── Initialisation ───── */
 
@@ -251,14 +229,11 @@
       if (!section) return;
 
       const profile = _profile();
-      const name    = _esc(profile.name || 'Eco Explorer');
+      const name    = EcoTrack.Utils.sanitizeInput(profile.name || 'Eco Explorer');
       const score   = this.getEcoScore();
 
       // Time-based greeting
-      const hour = new Date().getHours();
-      let greeting = 'Good evening';
-      if (hour < 12) greeting = 'Good morning';
-      else if (hour < 18) greeting = 'Good afternoon';
+      const greeting = EcoTrack.Utils.getGreeting();
 
       let levelTitle = 'Eco Seedling';
       if (EcoTrack.Challenges && typeof EcoTrack.Challenges.getLevelInfo === 'function') {
@@ -294,7 +269,7 @@
       if (!section) return;
 
       // Compute today's CO₂
-      const todayStart = _startOfDay();
+      const todayStart = EcoTrack.Utils.startOfDay();
       const todayActivities = _allActivities().filter(
         a => new Date(a.timestamp).getTime() >= todayStart
       );
@@ -388,7 +363,7 @@
               return `
                 <div class="category-card" aria-label="${m.name}: ${val.toFixed(2)} kg CO₂ (${pct}%)">
                   <span class="category-card-icon" aria-hidden="true">${m.icon}</span>
-                  <div class="category-card-name">${_esc(m.name)}</div>
+                  <div class="category-card-name">${EcoTrack.Utils.sanitizeInput(m.name)}</div>
                   <div class="category-card-value">${val.toFixed(1)} kg</div>
                   <div class="category-card-bar">
                     <div class="category-card-bar-fill" style="width: ${pct}%; background-color: ${m.color};"></div>
@@ -431,7 +406,7 @@
       for (let i = 29; i >= 0; i--) {
         const d = new Date(now);
         d.setDate(d.getDate() - i);
-        const dayStart = _startOfDay(d);
+        const dayStart = EcoTrack.Utils.startOfDay(d);
         const dayEnd   = dayStart + 86400000; // +24 h
 
         const dayLabel = d.toLocaleDateString('default', { month: 'short', day: 'numeric' });
@@ -525,13 +500,13 @@
         <div class="quick-actions" role="group" aria-label="Quick action buttons">
           ${QUICK_ACTIONS.map(qa => `
             <button class="quick-action-btn"
-                    data-category="${_esc(qa.category)}"
-                    data-type="${_esc(qa.type)}"
+                    data-category="${EcoTrack.Utils.sanitizeInput(qa.category)}"
+                    data-type="${EcoTrack.Utils.sanitizeInput(qa.type)}"
                     data-value="${qa.value}"
-                    aria-label="Quick log: ${_esc(qa.label)}"
-                    title="${_esc(qa.label)}">
+                    aria-label="Quick log: ${EcoTrack.Utils.sanitizeInput(qa.label)}"
+                    title="${EcoTrack.Utils.sanitizeInput(qa.label)}">
               <span class="quick-action-icon" aria-hidden="true">${qa.icon}</span>
-              <span class="quick-action-label">${_esc(qa.label)}</span>
+              <span class="quick-action-label">${EcoTrack.Utils.sanitizeInput(qa.label)}</span>
             </button>
           `).join('')}
         </div>
@@ -578,10 +553,10 @@
           ${challenges.slice(0, 3).map(ch => {
             const pct = ch.target > 0 ? Math.min((ch.progress / ch.target) * 100, 100).toFixed(0) : 0;
             return `
-              <div class="challenge-card" aria-label="${_esc(ch.title)}: ${pct}% complete" style="padding: var(--space-4);">
+              <div class="challenge-card" aria-label="${EcoTrack.Utils.sanitizeInput(ch.title)}: ${pct}% complete" style="padding: var(--space-4);">
                 <div class="challenge-card-header" style="margin-bottom: var(--space-2); display: flex; align-items: center; gap: var(--space-2);">
                   <span class="challenge-card-icon" style="font-size: 1.5rem;">${ch.icon}</span>
-                  <div class="challenge-card-title" style="font-weight: 600;">${_esc(ch.title)}</div>
+                  <div class="challenge-card-title" style="font-weight: 600;">${EcoTrack.Utils.sanitizeInput(ch.title)}</div>
                 </div>
                 <div class="challenge-card-progress">
                   <div class="challenge-progress-text">
@@ -625,13 +600,13 @@
             const label = (EcoTrack.Tracker && typeof EcoTrack.Tracker.getActivityLabel === 'function')
               ? EcoTrack.Tracker.getActivityLabel(a.category, a.type)
               : (a.type || 'Activity');
-            const timeAgo = _relativeTime(a.timestamp);
+            const timeAgo = EcoTrack.Utils.formatRelativeDate(a.timestamp);
             return `
               <li class="activity-feed-item" role="listitem">
                 <div class="activity-feed-icon" style="background-color: rgba(16, 185, 129, 0.1); color: ${meta.color || 'var(--eco-primary)'};">${meta.icon || '📌'}</div>
                 <div class="activity-feed-info">
-                  <div class="activity-feed-name">${_esc(label)}</div>
-                  <div class="activity-feed-meta">${_esc(timeAgo)}</div>
+                  <div class="activity-feed-name">${EcoTrack.Utils.sanitizeInput(label)}</div>
+                  <div class="activity-feed-meta">${EcoTrack.Utils.sanitizeInput(timeAgo)}</div>
                 </div>
                 <span class="activity-feed-co2">${(a.co2 || 0).toFixed(1)} kg</span>
               </li>`;
@@ -663,8 +638,8 @@
             <li class="activity-feed-item" role="listitem">
               <div class="activity-feed-icon">${tip.icon}</div>
               <div class="activity-feed-info">
-                <div class="activity-feed-name">${_esc(tip.title)}</div>
-                <div class="activity-feed-meta">${_esc(tip.text)}</div>
+                <div class="activity-feed-name">${EcoTrack.Utils.sanitizeInput(tip.title)}</div>
+                <div class="activity-feed-meta">${EcoTrack.Utils.sanitizeInput(tip.text)}</div>
               </div>
             </li>
           `).join('')}
@@ -717,7 +692,7 @@
         <div class="badges-grid" style="grid-template-columns: repeat(5, 1fr); gap: var(--space-2);">
           ${recentBadges.length > 0
             ? recentBadges.map(b => `
-                <div class="badge-item unlocked" title="${_esc(b.name)}" style="padding: var(--space-2); min-height: auto;">
+                <div class="badge-item unlocked" title="${EcoTrack.Utils.sanitizeInput(b.name)}" style="padding: var(--space-2); min-height: auto;">
                   <span class="badge-icon" style="font-size: 1.5rem; margin-bottom: 0;">${b.icon}</span>
                 </div>
               `).join('')
@@ -789,30 +764,5 @@
         return 50; // safe default
       }
     },
-  };
-
-  // ──────────────────────────────────────────────────
-  // Private utility — relative time display
-  // ──────────────────────────────────────────────────
-
-  /**
-   * Convert an ISO timestamp to a human-readable relative string.
-   * @param {string} isoString
-   * @returns {string}
-   */
-  function _relativeTime(isoString) {
-    try {
-      const diff = Date.now() - new Date(isoString).getTime();
-      const mins  = Math.floor(diff / 60000);
-      if (mins < 1)   return 'just now';
-      if (mins < 60)  return `${mins}m ago`;
-      const hrs = Math.floor(mins / 60);
-      if (hrs < 24)   return `${hrs}h ago`;
-      const days = Math.floor(hrs / 24);
-      return `${days}d ago`;
-    } catch (_) {
-      return '';
-    }
-  }
-
-})(typeof window !== 'undefined' ? window : globalThis);
+  });
+})();

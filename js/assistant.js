@@ -15,6 +15,10 @@ window.EcoTrack = window.EcoTrack || {};
 EcoTrack.Assistant = (() => {
   'use strict';
 
+  /** Paris Agreement target: ≈ 2.0 tonnes CO₂/year ≈ 5.48 kg/day. */
+  const PARIS_TARGET_YEARLY_TONNES = 2.0;
+  const PARIS_TARGET_DAILY_KG      = (PARIS_TARGET_YEARLY_TONNES * 1000) / 365;
+
   let chatHistory = [];
 
   // ─── Eco Fun Facts ───────────────────────────────────────────────────
@@ -77,7 +81,13 @@ EcoTrack.Assistant = (() => {
   function matchIntent(text) {
     const lower = text.toLowerCase().trim();
     for (const entry of INTENTS) {
-      if (entry.keywords.some(kw => lower.includes(kw))) {
+      if (entry.keywords.some(kw => {
+        if (kw.includes(' ')) {
+          return lower.includes(kw);
+        }
+        const regex = new RegExp(`\\b${kw}\\b`);
+        return regex.test(lower);
+      })) {
         return entry.intent;
       }
     }
@@ -280,7 +290,7 @@ EcoTrack.Assistant = (() => {
     const country = (profile.country || 'global').toLowerCase();
     const averages = EcoTrack.Calculator.getCountryAverages();
     const countryAvg = (averages[country] || averages['global']) * 1000 / 365;
-    const target = 2000 / 365;
+    const target = PARIS_TARGET_DAILY_KG;
 
     if (stats.avgDaily <= target) return 100;
     if (stats.avgDaily >= countryAvg * 2) return 0;
@@ -468,7 +478,7 @@ EcoTrack.Assistant = (() => {
   }
 
   // ─── Public API ──────────────────────────────────────────────────────
-  return {
+  return Object.freeze({
     init,
     renderChat,
     sendMessage,
@@ -479,5 +489,5 @@ EcoTrack.Assistant = (() => {
     generateResponse,
     getQuickReplies,
     FUN_FACTS
-  };
+  });
 })();

@@ -8,6 +8,7 @@ COPY index.html /usr/share/nginx/html/
 COPY assets /usr/share/nginx/html/assets
 COPY css /usr/share/nginx/html/css
 COPY js /usr/share/nginx/html/js
+COPY tests /usr/share/nginx/html/tests
 
 # Set default PORT environment variable (will be overridden by Cloud Run)
 ENV PORT=8080

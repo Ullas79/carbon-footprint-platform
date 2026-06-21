@@ -746,35 +746,60 @@ EcoTrack.App = (() => {
     `;
   }
 
-  // ─── Post-Onboarding Entry Point ─────────────────────────────────
-
-  /**
-   * Called by Onboarding module after completion
-   * to transition from onboarding to the main app.
-   */
-  function onOnboardingComplete() {
-    renderAppShell();
-    initModules();
-    navigateTo('dashboard', false);
-
-    // Show welcome toast
-    const profile = EcoTrack.Store.getUserProfile();
-    setTimeout(() => {
-      EcoTrack.Utils.showToast(
-        `Welcome to EcoTrack, ${EcoTrack.Utils.sanitizeInput(profile.name || 'Explorer')}! 🌿`,
-        'success',
-        4000
-      );
-    }, 500);
-  }
-
   // ─── Testing ──────────────────────────────────────────────────────
 
   /**
    * Run built-in tests
    */
-  function runTests() {
+  async function runTests() {
     console.log('%c🧪 Running EcoTrack Tests...', 'color: #3B82F6; font-size: 14px;');
+
+    // Try to load TestRunner dynamically if not present
+    if (typeof TestRunner === 'undefined') {
+      try {
+        console.log('Loading TestRunner dynamically...');
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'tests/test-runner.js';
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+      } catch (err) {
+        console.warn('Failed to load TestRunner, falling back to legacy tests:', err);
+        return runLegacyTests();
+      }
+    }
+
+    if (typeof TestRunner !== 'undefined') {
+      console.log('Executing structured test suites...');
+      const results = await TestRunner.run();
+
+      results.reports.forEach(suite => {
+        const suitePassed = suite.tests.every(t => t.passed);
+        console.log(`\n%c${suitePassed ? '📦' : '⚠️'} Suite: ${suite.name}`, suitePassed ? 'color: #10B981; font-weight: bold;' : 'color: #F59E0B; font-weight: bold;');
+        suite.tests.forEach(t => {
+          if (t.passed) {
+            console.log(`  ✅ ${t.name} (${t.assertions} assertions)`);
+          } else {
+            console.error(`  ❌ ${t.name} (${t.assertions} assertions)\n     Error: ${t.error}`);
+          }
+        });
+      });
+
+      console.log(`\n%c🧪 Tests Complete: ${results.passed} passed, ${results.failed} failed`, 
+        `color: ${results.failed === 0 ? '#10B981' : '#EF4444'}; font-size: 14px; font-weight: bold;`);
+
+      return results;
+    }
+
+    return runLegacyTests();
+  }
+
+  /**
+   * Legacy console-based unit tests fallback.
+   */
+  function runLegacyTests() {
     let passed = 0;
     let failed = 0;
 
@@ -864,15 +889,37 @@ EcoTrack.App = (() => {
       assert(typeof botResponse === 'string' && botResponse.includes('Did you know?'), 'Assistant: generates fact response');
     }
 
-    console.log(`\n%c🧪 Tests Complete: ${passed} passed, ${failed} failed`, 
+    console.log(`\n%c🧪 Legacy Tests Complete: ${passed} passed, ${failed} failed`, 
       `color: ${failed === 0 ? '#10B981' : '#EF4444'}; font-size: 14px;`);
     
     return { passed, failed };
   }
 
+  // ─── Post-Onboarding Entry Point ─────────────────────────────────
+
+  /**
+   * Called by Onboarding module after completion
+   * to transition from onboarding to the main app.
+   */
+  function onOnboardingComplete() {
+    renderAppShell();
+    initModules();
+    navigateTo('dashboard', false);
+
+    // Show welcome toast
+    const profile = EcoTrack.Store.getUserProfile();
+    setTimeout(() => {
+      EcoTrack.Utils.showToast(
+        `Welcome to EcoTrack, ${EcoTrack.Utils.sanitizeInput(profile.name || 'Explorer')}! 🌿`,
+        'success',
+        4000
+      );
+    }, 500);
+  }
+
   // ─── Public API ───────────────────────────────────────────────────
 
-  return {
+  return Object.freeze({
     init,
     navigateTo,
     onOnboardingComplete,
@@ -881,7 +928,7 @@ EcoTrack.App = (() => {
     runTests,
     getCurrentView: () => currentView,
     getViews: () => VIEWS
-  };
+  });
 })();
 
 // ─── Bootstrap ────────────────────────────────────────────────────────

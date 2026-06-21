@@ -448,7 +448,7 @@ EcoTrack.Challenges = (() => {
   }
 
   // ─── Public API ──────────────────────────────────────────────────────
-  return {
+  return Object.freeze({
     init,
     getActiveChallenges,
     getCompletedChallenges,
@@ -466,5 +466,5 @@ EcoTrack.Challenges = (() => {
     BADGES,
     CHALLENGES,
     LEVELS
-  };
+  });
 })();

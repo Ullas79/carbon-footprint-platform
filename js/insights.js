@@ -426,7 +426,7 @@ EcoTrack.Insights = (() => {
   }
 
   // ─── Public API ──────────────────────────────────────────────────────
-  return {
+  return Object.freeze({
     init,
     generateInsights,
     getTopRecommendations,
@@ -439,5 +439,5 @@ EcoTrack.Insights = (() => {
     completeInsight,
     renderInsightsPanel,
     renderDetailedInsights
-  };
+  });
 })();

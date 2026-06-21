@@ -95,6 +95,7 @@ EcoTrack.Utils = (() => {
    */
   function formatDate(date) {
     try {
+      if (!date) return '';
       const d = new Date(date);
       if (Number.isNaN(d.getTime())) return '';
 
@@ -384,6 +385,18 @@ EcoTrack.Utils = (() => {
   // ─── Date Helpers ───────────────────────────────────────────────────
 
   /**
+   * Return the start-of-day timestamp (ms) for a Date.
+   *
+   * @param {Date|string|number} [date=new Date()]
+   * @returns {number}
+   */
+  function startOfDay(date = new Date()) {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d.getTime();
+  }
+
+  /**
    * Return a greeting appropriate for the time of day.
    *
    * @returns {'Good morning'|'Good afternoon'|'Good evening'}
@@ -519,6 +532,7 @@ EcoTrack.Utils = (() => {
     showToast,
 
     // Date helpers
+    startOfDay,
     getGreeting,
     getDaysInMonth,
     getWeekNumber,
