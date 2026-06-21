@@ -94,6 +94,14 @@ EcoTrack.App = (() => {
       setupEventListeners();
 
       isInitialized = true;
+
+      // Check if tests should run automatically via query param
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('test') || urlParams.has('tests') || urlParams.has('runTests')) {
+        setTimeout(() => {
+          runTests();
+        }, 500);
+      }
     } catch (error) {
       console.error('EcoTrack initialization failed:', error);
       renderErrorState(error);
@@ -809,6 +817,52 @@ EcoTrack.App = (() => {
     // Trees calculation
     const trees = EcoTrack.Calculator.treesNeededToOffset(220);
     assert(trees === 10, 'treesNeededToOffset(220) = 10 trees');
+
+    // Accessibility tests
+    const initialPrefs = EcoTrack.Accessibility?.getPreferences();
+    if (initialPrefs) {
+      assert(typeof initialPrefs.reducedMotion === 'boolean', 'Accessibility: reducedMotion preference is boolean');
+      assert(typeof initialPrefs.highContrast === 'boolean', 'Accessibility: highContrast preference is boolean');
+    }
+
+    // Tracker tests
+    if (EcoTrack.Tracker) {
+      const initialLogsCount = EcoTrack.Tracker.getTodayActivities().length;
+      EcoTrack.Tracker.logActivity('transport', 'car_petrol', 10);
+      const newLogs = EcoTrack.Tracker.getTodayActivities();
+      assert(newLogs.length === initialLogsCount + 1, 'Tracker: activity logged successfully');
+      const lastLog = newLogs.find(l => l.value === 10 && l.type === 'car_petrol');
+      if (lastLog) {
+        assert(lastLog.category === 'transport' && lastLog.type === 'car_petrol' && lastLog.value === 10, 'Tracker: correct activity details');
+        EcoTrack.Tracker.deleteActivity(lastLog.id);
+        assert(EcoTrack.Tracker.getTodayActivities().length === initialLogsCount, 'Tracker: activity deleted successfully');
+      }
+    }
+
+    // Challenges tests
+    if (EcoTrack.Challenges) {
+      const lvlInfo = EcoTrack.Challenges.getLevelInfo(0);
+      assert(lvlInfo.level === 1, 'Challenges: 0 XP is Level 1');
+      assert(lvlInfo.progressPercent === 0, 'Challenges: 0 XP has 0% progress');
+      const badgeInfo = EcoTrack.Challenges.getBadgeInfo('first-log');
+      assert(badgeInfo !== null && badgeInfo.name === 'First Step', 'Challenges: retrieved correct badge info');
+    }
+
+    // Insights tests
+    if (EcoTrack.Insights) {
+      const seasonalTips = EcoTrack.Insights.getSeasonalTips();
+      assert(Array.isArray(seasonalTips) && seasonalTips.length > 0, 'Insights: retrieves seasonal tips');
+      const contextualTip = EcoTrack.Insights.getContextualTip();
+      assert(typeof contextualTip === 'string' && contextualTip.length > 0, 'Insights: retrieves contextual tip');
+    }
+
+    // Assistant tests
+    if (EcoTrack.Assistant) {
+      const intent = EcoTrack.Assistant.matchIntent('hello');
+      assert(intent === 'greeting', 'Assistant: matches greeting intent');
+      const botResponse = EcoTrack.Assistant.generateResponse('fact');
+      assert(typeof botResponse === 'string' && botResponse.includes('Did you know?'), 'Assistant: generates fact response');
+    }
 
     console.log(`\n%c🧪 Tests Complete: ${passed} passed, ${failed} failed`, 
       `color: ${failed === 0 ? '#10B981' : '#EF4444'}; font-size: 14px;`);
